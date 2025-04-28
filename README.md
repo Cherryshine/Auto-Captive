@@ -3,7 +3,6 @@
 
 교내 와이파이를 이용하며, 캡티브 포탈이 주기적으로 열려 로그인해야하는 번거로움이 있어 제작했습니다.
 이 Lua 스크립트는 **macOS의 Hammerspoon** 환경에서 실행되며, 학교 WiFi인 `KBU_PUBLIC`에 연결될 때 자동으로 로그인합니다.
-
 ---
 
 ## 🛠 주요 기능
@@ -14,6 +13,54 @@
 - WiFi 상태 변화 감지 및 자동 재시도
 - 메뉴바에 알림 표시 (`hs.alert` 사용)
 
+---
+## Diagram
+``` mermaid
+%%{init: {'themeVariables': {fontSize: '10px'}, 'flowchart': {'nodeSpacing': 10, 'rankSpacing': 10}}}%%
+flowchart TD
+    HS["Hammerspoon Host (macOS Runtime)"]:::host
+    README["README.md"]:::doc
+
+    subgraph "Automation Script (init.lua)"
+        WF["Wi-Fi Watcher"]:::internal
+        HC["HTTP Client"]:::internal
+        TE["Token Extractor"]:::internal
+        LM["Login Manager"]:::internal
+        CC["Connectivity Checker"]:::internal
+        NT["Notifier"]:::internal
+    end
+
+    Web["Captive Portal Web Server"]:::external
+    Int["Internet (Connectivity Test)"]:::external
+
+    HS -->|"Network Change (SSID KBU_PUBLIC)"| WF
+    WF -->|"Detect captive portal / HTTP GET"| HC
+    HC -->|"HTML Response"| TE
+    TE -->|"Parsed Token"| LM
+    LM -->|"POST credentials+token"| Web
+    Web -->|"200 OK + cookies"| LM
+    LM -->|"Verify Internet"| CC
+    CC -->|"GET known site"| Int
+    CC -->|"Success/Failure"| NT
+
+    click README "https://github.com/cherryshine/project-wifi-autologin/blob/main/README.md"
+    click WF "https://github.com/cherryshine/project-wifi-autologin/blob/main/init.lua"
+    click HC "https://github.com/cherryshine/project-wifi-autologin/blob/main/init.lua"
+    click TE "https://github.com/cherryshine/project-wifi-autologin/blob/main/init.lua"
+    click LM "https://github.com/cherryshine/project-wifi-autologin/blob/main/init.lua"
+    click CC "https://github.com/cherryshine/project-wifi-autologin/blob/main/init.lua"
+    click NT "https://github.com/cherryshine/project-wifi-autologin/blob/main/init.lua"
+
+    classDef host fill:#f9f,stroke:#333,stroke-width:1px
+    classDef internal fill:#bbf,stroke:#333,stroke-width:1px
+    classDef external fill:#ccc,stroke:#333,stroke-width:1px
+    classDef doc fill:#afa,stroke:#333,stroke-width:1px
+
+    linkStyle 8 stroke:#0a0,stroke-width:2px
+
+
+
+```
 ---
 
 ## 📦 사용 환경
@@ -75,6 +122,7 @@ local password = "your_password"
 - macOS 전용이며, Windows에서는 작동하지 않습니다.
 
 ---
+
 
 ## 📄 라이선스
 
