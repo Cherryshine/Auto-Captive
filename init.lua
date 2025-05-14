@@ -316,4 +316,5 @@ log("KBU_PUBLIC 자동 로그인 스크립트가 시작됨")
 wifiChangedCallback()
 
 -- 반환값: 스크립트 종료 시 wifiWatcher 정리용
+
 return wifiWatcher
